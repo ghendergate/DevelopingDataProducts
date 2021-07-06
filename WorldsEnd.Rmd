@@ -1,0 +1,95 @@
+---
+title: "World's End Pub Crawl"
+author: "Gabriel Hendergate"
+date: "06/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Pub Crawl 2021/07/06
+
+This interactive map plots the route taken by the heroes during "The 
+World's End", featuring Simon Pegg and Nick Frost in their final journey - 
+known to us survivors as the Cornetto Trilogy. 
+Their names have been changed to protect their identities.
+
+Only seven pubs out of the 12 are known to have survived the invasion by 
+REDACTED, and these relics have since been taken under new ownership. During the 
+short war with REDACTED the town of Newton-Haven was decimated and has 
+since been rebuilt as Welwyn Garden City and Letchworth. 
+During your pilgrimage to these fine British establishments take a moment to 
+remember the loss of your connection to REDACTED, and to forge new friendships 
+and old, and to arrange for a horse-drawn cart to take you back home.
+
+Please open each marker to view an illustration of the former pub sign and 
+see the name of the new venue.
+
+```{r mapping}
+library(leaflet)
+# prepare the data
+pubs <- data.frame(
+    latitude = c(51.790160124758614, 
+                 51.80016458093416, 
+                 51.802169980552726,
+                 51.97928361055955, 
+                 51.97941295262207, 
+                 51.97784444453014, 
+                 51.97953836779092
+                 ),
+    longitude  = c(-0.19715907765130217,
+                   -0.2082224647981939,
+                   -0.20746533462751418,
+                   -0.22665721990273915,
+                   -0.2283959579973739,
+                   -0.22968098360747663,
+                   -0.25261373479802396
+                   )
+    )
+filmName = c("The First Post",
+             "The Old Familiar",
+             "The Famous Cock",
+             "The Trusty Servant",
+             "Two Headed Dog",
+             "The King’s Head",
+             "The World’s End"
+             )
+realName = c("1. Pear Tree Inn",
+             "2. The Doctors Tonic",
+             "3. Two Willows",
+             "4. Three Magnets",
+             "5. The Platform",
+             "6. The Arena Tavern",
+             "7. The Wilbury"
+             )
+pubIcons = icons(iconUrl = c("https://simonpegg.net/wp-content/uploads/2013/07/firstpost-728x1024.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/oldfamiliar-719x1024.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/famouscock.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/trustyservant-667x1024.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/twoheadeddog-783x1024.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/thekingshead.jpg",
+        "https://simonpegg.net/wp-content/uploads/2013/07/theworldsendpub-707x1024.jpg"
+        ),
+        iconWidth = rep("73.4", 7),
+        iconHeight = rep("100", 7)
+)
+# create html syntax for images
+pubUrls = c()
+for (i in seq(1:length(pubIcons$iconUrl))) {
+    pubUrls[i] <- paste("<img src = ", pubIcons$iconUrl[i], 
+                        " width = ", pubIcons$iconWidth[i], 
+                        " height = ", pubIcons$iconHeight[i],
+                        ">")
+}
+ 
+# generate the map
+pubs %>%
+    leaflet() %>%
+    addTiles() %>%
+    addMarkers(popup = pubUrls,
+               label = realName) %>%
+    addPolylines(data = pubs, lng = ~longitude, lat = ~latitude)
+```
+
